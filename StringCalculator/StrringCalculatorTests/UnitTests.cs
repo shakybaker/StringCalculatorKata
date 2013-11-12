@@ -11,7 +11,7 @@ namespace StringCalculatorTests
     [TestFixture]
     public class UnitTests
     {
-        StringCalculator calc;
+        IStringCalculator calc;
 
         [SetUp]
 	    public void RunBeforeAnyTests()
@@ -20,11 +20,10 @@ namespace StringCalculatorTests
         }
 
         [Test]
-        public void An_empty_string_returns_zero()
+        [ExpectedException(typeof(ArgumentException))]
+        public void An_empty_string_throws_an_exception()
         {
-            var actual = calc.Calculate(string.Empty);
-
-            Assert.AreEqual(0, actual);
+            var actual = calc.Calculate("");
         }
 
         [Test]
@@ -77,7 +76,7 @@ namespace StringCalculatorTests
         [Test]
         public void A_single_char_delimiter_can_be_defined_on_the_first_line()
         {
-            //NOTE: my assumption here is that there will be a '\n' after the delimiter
+            //TODO: my assumption here is that there will be a '\n' after the delimiter - add a test to check
             var actual = calc.Calculate("//[#]\n1#2");
 
             Assert.AreEqual(3, actual);
@@ -86,7 +85,7 @@ namespace StringCalculatorTests
         [Test]
         public void A_multi_char_delimiter_can_be_defined_on_the_first_line()
         {
-            //NOTE: my assumption here is that the "[]" chars aren't used as delimiters
+            //TODO: my assumption here is that the "[]" chars aren't used as delimiters - add a test to check
             var actual = calc.Calculate("//[##]\n1##2");
 
             Assert.AreEqual(3, actual);
@@ -98,6 +97,13 @@ namespace StringCalculatorTests
             var actual = calc.Calculate("//[##][@][^^^^^]\n1##2@3^^^^^4");
 
             Assert.AreEqual(10, actual);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Sending_non_numeric_chars_as_an_argument_throws_exception()
+        {
+            var actual = calc.Calculate("x");
         }
     }
 }
