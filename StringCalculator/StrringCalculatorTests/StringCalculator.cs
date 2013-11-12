@@ -13,21 +13,30 @@ namespace StrringCalculatorTests
             var delimiters = new string[] { ",", "\n" };
             string args;
 
-            var delimMatch = Regex.Match(input, @"^//(?<delim>.*?)\n(?<args>.*$?)");
-            if (delimMatch.Success)
+            var match = Regex.Match(input, @"^//(?<delim>.*?)\n(?<args>.*$?)");
+            if (match.Success)
             {
-                string delims = delimMatch.Groups["delim"].Value;
-                var argMatch = Regex.Match(delims, @"\[.*\].*$");
-                var i = 0;
-                while (argMatch.Success)
+                var delims = match.Groups["delim"].Value.ToCharArray();
+                var argMatch = Regex.Match(match.Groups["delim"].Value, @"\[.*\].*$");
+
+                //TODO: sort out this filthy hack, need to get regex working here
+                var d = string.Empty;
+                foreach (var c in delims)
                 {
-                    Array.Resize(ref delimiters, delimiters.Length + 1);
-                    delimiters[delimiters.Length - 1] = argMatch.Groups[i].Value;
-                    argMatch.NextMatch();
-                    i++;
+                    if (c != '[')
+                    {
+                        if (c == ']')
+                        {
+                            Array.Resize(ref delimiters, delimiters.Length + 1);
+                            delimiters[delimiters.Length - 1] = d;
+                            d = string.Empty;
+                        }
+                        else
+                            d += c;
+                    }
                 }
 
-                args = delimMatch.Groups["args"].Value;
+                args = match.Groups["args"].Value;
             }
             
             
