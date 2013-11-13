@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StrringCalculatorTests;
+using StringCalculatorTests;
 
 namespace StringCalculatorTests
 {
@@ -27,33 +27,37 @@ namespace StringCalculatorTests
         }
 
         [Test]
-        public void A_single_number_returns_the_value()
+        [TestCase("1", 1)]
+        public void A_single_number_returns_the_value(string input, int expected)
         {
-            var actual = calc.Calculate("1");
+            var actual = calc.Calculate(input);
 
-            Assert.AreEqual(1, actual);
+            Assert.AreEqual(expected, actual);
         }
 
         [Test]
-        public void Two_numbers_comma_delimited_returns_the_sum()
+        [TestCase("1,2", 3)]
+        public void Two_numbers_comma_delimited_returns_the_sum(string input, int expected)
         {
-            var actual = calc.Calculate("1,2");
+            var actual = calc.Calculate(input);
 
             Assert.AreEqual(3, actual);
         }
 
         [Test]
-        public void Two_numbers_newline_delimited_returns_the_sum()
+        [TestCase("1\n2", 3)]
+        public void Two_numbers_newline_delimited_returns_the_sum(string input, int expected)
         {
-            var actual = calc.Calculate("1\n2");
+            var actual = calc.Calculate(input);
 
             Assert.AreEqual(3, actual);
         }
 
         [Test]
-        public void Three_numbers_delimited_either_way_returns_the_sum()
+        [TestCase("1\n2,3", 6)]
+        public void Three_numbers_delimited_either_way_returns_the_sum(string input, int expected)
         {
-            var actual = calc.Calculate("1\n2,3");
+            var actual = calc.Calculate(input);
 
             Assert.AreEqual(6, actual);
         }
@@ -66,35 +70,39 @@ namespace StringCalculatorTests
         }
 
         [Test]
-        public void Numbers_greater_than_1000_are_ignored()
+        [TestCase("1,1001", 1)]
+        public void Numbers_greater_than_1000_are_ignored(string input, int expected)
         {
-            var actual = calc.Calculate("1,1001");
+            var actual = calc.Calculate(input);
 
             Assert.AreEqual(1, actual);
         }
 
         [Test]
-        public void A_single_char_delimiter_can_be_defined_on_the_first_line()
+        [TestCase("//[#]\n1#2", 3)]
+        public void A_single_char_delimiter_can_be_defined_on_the_first_line(string input, int expected)
         {
             //TODO: my assumption here is that there will be a '\n' after the delimiter - add a test to check
-            var actual = calc.Calculate("//[#]\n1#2");
+            var actual = calc.Calculate(input);
 
             Assert.AreEqual(3, actual);
         }
 
         [Test]
-        public void A_multi_char_delimiter_can_be_defined_on_the_first_line()
+        [TestCase("//[##]\n1##2", 3)]
+        public void A_multi_char_delimiter_can_be_defined_on_the_first_line(string input, int expected)
         {
             //TODO: my assumption here is that the "[]" chars aren't used as delimiters - add a test to check
-            var actual = calc.Calculate("//[##]\n1##2");
+            var actual = calc.Calculate(input);
 
             Assert.AreEqual(3, actual);
         }
 
         [Test]
-        public void Many_single_or_multichar_delimiters_can_be_defined()
+        [TestCase("//[##][@][^^^^^]\n1##2@3^^^^^4", 10)]
+        public void Many_single_or_multichar_delimiters_can_be_defined(string input, int expected)
         {
-            var actual = calc.Calculate("//[##][@][^^^^^]\n1##2@3^^^^^4");
+            var actual = calc.Calculate(input);
 
             Assert.AreEqual(10, actual);
         }

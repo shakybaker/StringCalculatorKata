@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace StrringCalculatorTests
+namespace StringCalculatorTests
 {
     public class StringCalculator : IStringCalculator
     {
@@ -15,21 +15,7 @@ namespace StrringCalculatorTests
                 var delims = match.Groups["delim"].Value.ToCharArray();
                 args = match.Groups["args"].Value;
                 var argMatch = Regex.Match(match.Groups["delim"].Value, @"\[.*\].*$");
-                var d = string.Empty;
-                foreach (var c in delims) //TODO: sort out this filthy hack, need to get regex working here
-                {
-                    if (c != '[')
-                    {
-                        if (c == ']')
-                        {
-                            Array.Resize(ref delimiters, delimiters.Length + 1);
-                            delimiters[delimiters.Length - 1] = d;
-                            d = string.Empty;
-                        }
-                        else
-                            d += c;
-                    }
-                }
+                delimiters = AddNewDelimiters(delims, delimiters);
             }
             
             var numArray = args.Split(delimiters, StringSplitOptions.None);
@@ -40,6 +26,27 @@ namespace StrringCalculatorTests
                 sum = sum + ConvertToNumber(numArray[i]);
 
             return sum;
+        }
+
+        private string[] AddNewDelimiters(char[] delims, string[] delimiters)
+        {
+            var d = string.Empty;
+            foreach (var c in delims) //TODO: sort out this filthy hack, need to get regex working here
+            {
+                if (c != '[')
+                {
+                    if (c == ']')
+                    {
+                        Array.Resize(ref delimiters, delimiters.Length + 1);
+                        delimiters[delimiters.Length - 1] = d;
+                        d = string.Empty;
+                    }
+                    else
+                        d += c;
+                }
+            }
+
+            return delimiters;
         }
 
         private static int ConvertToNumber(string input)
